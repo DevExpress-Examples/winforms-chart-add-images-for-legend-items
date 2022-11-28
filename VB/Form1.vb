@@ -4,13 +4,14 @@ Imports System.Data
 Imports System.Drawing
 Imports System.IO
 Imports System.Windows.Forms
+Imports DevExpress.Drawing
 Imports DevExpress.XtraCharts
 
 Namespace ImageLegendItems
 
     Partial Public Class Form1
         Inherits Form
-        Private photos As New Dictionary(Of String, Image)()
+        Private photos As New Dictionary(Of String, DXImage)()
 
         Public Sub New()
             InitializeComponent()
@@ -26,10 +27,10 @@ Namespace ImageLegendItems
                 Dim lastName As String = row.ItemArray(1).ToString()
                 If (Not photos.ContainsKey(lastName)) Then
                     Using stream As New MemoryStream(CType(row.ItemArray(14), Byte()))
-                        Using sourceImage As Image = image.FromStream(stream)
-                            Dim image As New Bitmap(74, 79)
-                            Using graphics As Graphics = graphics.FromImage(image)
-                                graphics.DrawImage(sourceImage, _
+                        Using sourceImage As DXImage = DXImage.FromStream(stream)
+                            Dim image As New DXBitmap(74, 79)
+                            Using graphics As DXGraphics = DXGraphics.FromImage(image)
+                                graphics.DrawImage(sourceImage,
                                                    New Rectangle(New Point(5, 5), New Size(75, 75)))
                             End Using
                             photos.Add(lastName, image)
@@ -41,7 +42,7 @@ Namespace ImageLegendItems
 
         Private Sub chartControl1_CustomDrawSeries(ByVal sender As Object, ByVal e As CustomDrawSeriesEventArgs) _
         Handles chartControl1.CustomDrawSeries
-            e.LegendMarkerImage = photos(e.Series.Name)
+            e.DXLegendMarkerImage = photos(e.Series.Name)
         End Sub
     End Class
 
